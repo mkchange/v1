@@ -1,5 +1,9 @@
 # -*- coding:utf-8 -*-
 import pygame
+import time
+import random
+
+#自己控制的飞机
 class playone(object):
     def __init__(self,screen_main):
         self.x = 220
@@ -20,6 +24,8 @@ class playone(object):
         self.x+=5
     def fire(self):
         self.bullet_list.append(bullet(self.screen,self.x,self.y))
+
+#敌机
 class enemy(object):
     def __init__(self, screen_main):
         self.x = 0
@@ -37,7 +43,9 @@ class enemy(object):
                 self.bullet_list.remove(bullet_tem)
 
     def fire(self):
-        self.bullet_list.append(bullet(self.screen, self.x, self.y))
+        random_num = random.randint(1,100)
+        if random_num==1 or random_num==60:
+            self.bullet_list.append(Enemy_bullet(self.screen, self.x, self.y))
 
     def aot_move(self):
         if self.direction == 'right':
@@ -49,7 +57,7 @@ class enemy(object):
             if self.x<0:
                 self.direction = 'right'
 
-
+#自己飞机发射子弹
 class bullet(object):
     def __init__(self,screen_main,x,y):
         self.x = x+40
@@ -65,6 +73,23 @@ class bullet(object):
             return True
         else:
             return False
+
+#敌机发射子弹
+class Enemy_bullet(bullet):
+    def __init__(self, screen_main, x, y):
+        self.x = x +20
+        self.y = y + 40
+        self.screen = screen_main
+        self.image = pygame.image.load("D:\BaiduNetdiskDownload/feiji/bullet1.png")
+    def move(self):
+        self.y+=5
+    def judge(self):
+        if self.y>852:
+            return True
+        else:
+            return False
+
+#飞机控制
 def play_control(hero1):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -80,18 +105,24 @@ def play_control(hero1):
                 print('space')
                 hero1.fire()
 
+#碰撞检测
+def Impact_check():
+    pass
+
+
 def main():
     screen = pygame.display.set_mode((480,852),0,32)
     background = pygame.image.load("D:\BaiduNetdiskDownload/feiji/background.png")
     hero1 = playone(screen)
     enemy1 = enemy(screen)
+    i=0
     while True:
+        time.sleep(0.001)
         screen.blit(background,(0,0))
         hero1.display()
         enemy1.display()
         enemy1.aot_move()
         enemy1.fire()
-        #play_bullet.display()
         pygame.display.update()
         play_control(hero1)
 
